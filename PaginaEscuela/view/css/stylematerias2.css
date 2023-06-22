@@ -1,0 +1,148 @@
+
+*{font-family:'Times New Roman', Times, serif;}
+::-webkit-scrollbar{
+width: 12px;
+background-color: #000000ef; }
+
+::-webkit-scrollbar-thumb {
+border-radius: 10px;
+-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+background-color: #00B573; }
+
+
+::-webkit-scrollbar-track{
+-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+background-color: #00000057;
+border-radius: 10px; }
+/*---------------------------------------------------Menu---------------------------------------------------*/
+.navbar .collapse ul li .nav-link{font-weight: 700; font-size: 125%!important; color: #fff; margin-top: 4px;}
+.navbar .collapse ul li .nav-link.active{color:green!important;}
+.navbar .collapse ul li .nav-link:hover{color:green!important;}
+.nav-item .dropdown-menu{background: #343a40; margin-left: -10px;}
+.nav-item .dropdown-menu a{color: #fff!important; font-size: 110%!important;}
+.nav-item .dropdown-menu a:hover{ color: green!important; background: rgba(0, 0, 0, 0.3);}
+.nav-item .dropdown-menu a{background: none;}
+.logo-brand{width: 55px;}
+
+.navbar .navbar-brand{font-size:120%;}
+.navbar .login{
+    border-radius: 10px;
+}
+.redes .redsocial{
+    border-radius: 10px;
+}
+.modal-content .card-header i{
+    color: rgb(1, 202, 1);
+}
+.modal-content .card-header {
+    color: rgb(255, 255, 255);
+}
+#form .boton{
+    border-radius: 20px;
+    color: rgb(255, 255, 255);
+    /*background: linear-gradient(to left top, #0f8500,#00ff22 ,#209200);*/
+}
+#form .arriba{
+    margin-top: -1px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+/*---------------------------------------------Sistema---------------------------------------------*/
+
+#Sistema{
+    margin-top: 150px;
+    margin-bottom: 150px;
+}
+.formulario{
+    width: 85%;
+    background-color:#3b4652 !important;
+    opacity: .95;
+    margin-top: 400px!important;
+    padding: 0 20px;
+    box-shadow: 0px 0px 3px #848484;
+    color: white;
+    text-align: center;
+}
+
+.formulario img {
+    margin-top: -55px;
+    width: 100px;
+    height: 100px; 
+}
+
+.Ingresar{
+    background-color:#0592D4 !important; 
+    color: black!important; 
+    font-size: 20px;
+    font-weight: 700!important; 
+}
+/*---------------------------------------------Footer---------------------------------------------*/
+#team-footer{ color:#fff; background: #2c3e50; position: static;}
+#team-footer .card{background:#2c3e50; box-shadow: 2px 3px 4px #fff;}
+#team-footer .card i{font-size:400%; color:#c3b7df; margin-top: 50px;}
+#team-footer .nav{margin: 25px!important;}
+#team-footer .columnas{margin-top: 60px;}
+.nav-link{font-family: Georgia; color: #fff;font-size:100%;}
+.nav-link:hover {margin-left: 1px; color:green;}
+#team-footer hr{height: 3px;background-color: #00C34A;}
+#team-footer .InfoFooter p{font-size:120%;}
+#directivos{width: 62%;margin: auto;}
+#directivos .tercercard{margin-left: auto;margin-right: auto;}
+/*--------------------------------------------Screens--------------------------------------------*/
+@media screen and (max-width: 1530px){
+    #directivos{width: 82%;}
+    #team-footer .nav a{font-size: 99%;margin-left: -35px;}
+    #team-footer .nav .sub{font-size: 95%; margin-left: -13px!important;}
+}
+@media screen and (max-width: 1199px){
+    .navbar .collapse ul li .nav-link{font-size: 110%!important;}
+    .nav-item .dropdown-menu a{font-size: 100%!important;}
+    .logo-brand{max-width: 38px;}
+    .navbar .navbar-brand{font-size:110%;}
+    #directivos{width: 100%;}
+    #team-footer .row{font-size:95%;}
+    #team-footer .nav{margin:0!important;}
+    .tercercard{
+        margin: auto;
+    }
+    .formulario{
+        width: 100%;
+        margin-top: -40px!important;
+    }
+}
+
+@media screen and (max-width: 990px){
+    #team-footer .nav{margin:0!important;}
+    #team-footer .card{width:7rem!important; height: 10rem!important;}
+    #team-footer .card-body i{font-size:350%;margin-top:40px!important;}
+}
+@media screen and (max-width: 800px){
+    #team-footer .card{width:7rem!important; height: 10rem!important;}
+    #team-footer .card-body i{font-size:320%;margin-top:40px!important;}
+}
+
+@media screen and (max-width: 767px){
+    #team-footer .card{width:7rem!important; height: 9rem!important;}
+    #team-footer .card-body i{font-size:280%;margin-top:30px!important;}
+    #team-footer .nav{margin: 25px!important;}
+}
+
+@media screen and (max-width: 576px){ 
+    .navbar .collapse ul li .nav-link{font-size: 80%!important;}
+    .nav-item .dropdown-menu a{ font-size: 75%!important;}
+    .logo-brand{max-width: 30px;}
+    .navbar .navbar-brand{font-size:90%;}
+    #team-footer .nav a{font-size: 99%;}
+    #team-footer .columnas{width: 95%; margin: auto;}
+    #team-footer .card{width:5.5rem!important; height: 7.5rem!important;}
+    #team-footer .card-body i{font-size:280%;margin-top:22px!important; }
+}
+
+@media screen and (max-width: 350px){
+    #team-footer{width:100%;}
+    #team-footer .row{display:block;}
+    #team-footer .card{width:5rem!important; height: 6rem!important; margin-bottom:15px!important; }
+    #team-footer .card i{font-size:250%; margin-top:10px!important;}
+    #team-footer .nav{margin:5px 0px 5px 0px!important; }
+    #team-footer .InfoFooter p{font-size:95%;}
+}
