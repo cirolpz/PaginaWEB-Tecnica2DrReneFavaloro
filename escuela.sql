@@ -73,7 +73,7 @@ CREATE TABLE `comunicados` (
   `id_Comunicado` int(3) NOT NULL,
   `Titulo` text NOT NULL,
   `Descripcion` text NOT NULL,
-  `Fecha` date NOT NULL DEFAULT current_timestamp()
+  `Fecha` date NOT NULL DEFAULT '0000-00-00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -362,3 +362,10 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Agregar la columna id_Curso a la tabla materias
+ALTER TABLE `materias`
+ADD COLUMN `id_Curso` INT NOT NULL;
+
+-- Establecer la clave foránea para la columna id_Curso
+ALTER TABLE `materias`
+ADD CONSTRAINT `fk_materias_cursos` FOREIGN KEY (`id_Curso`) REFERENCES `cursos`(`id_Curso`);

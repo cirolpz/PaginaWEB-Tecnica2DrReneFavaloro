@@ -5,91 +5,88 @@ $usuarioverificacion= $_SESSION['id_Usuario'];
 $Cargo = $_SESSION['id_Cargo'];
 $objeto = new crud_usuario();
 
-
 //Usuarios
 $sql = $objeto->mostrar_condicion("t1.Usuario, t1.Contraseña ,t2.Descripcion_Cargo","usuarios t1 INNER JOIN cargo t2 ON t1.id_Cargo=t2.id_Cargo","id_Usuario = '$usuarioverificacion'");
 foreach ($sql as $row){
-	$Contraseña            = $row['Contraseña'];
-	$Usuario               = $row['Usuario'];
-	$Descripcion_Cargo	   = $row['Descripcion_Cargo'];
+    $Contraseña            = $row['Contraseña'];
+    $Usuario               = $row['Usuario'];
+    $Descripcion_Cargo	   = $row['Descripcion_Cargo'];
 }
 
 //Profesores
 $sqlProfesores = $objeto->mostrar_condicion("*","profesores", "id_Usuario = '$usuarioverificacion'");
 foreach ($sqlProfesores as $row){
-	$NombreProfesor            	   = $row['Nombre'];
-	$ApellidoProfesor              = $row['Apellido'];
-	$id_Profesor 				   = $row['id_Profesores'];
+    $NombreProfesor            	   = $row['Nombre'];
+    $ApellidoProfesor              = $row['Apellido'];
+    $id_Profesor 				   = $row['id_Profesor'];
 }
-$sqlMaterias = $objeto->mostrar_condicion("*","materias INNER JOIN cursos ON cursos.id_Curso=materias.id_Curso", "id_Profesores = '$id_Profesor'");
 
-//Administradores
+// Materias y Cursos asociados al profesor
+$sqlMaterias = $objeto->mostrar_condicion("materias.*, cursos.*", "materias INNER JOIN cursos ON cursos.id_Curso = materias.id_Curso INNER JOIN profesores ON profesores.id_Materia = materias.id_Materia", "profesores.id_Usuario = '$usuarioverificacion'");
+
 $sqlAdministrador = $objeto->mostrar_condicion("*","administradores", "id_Usuario = '$usuarioverificacion'");
 foreach ($sqlAdministrador as $row){	
-	$NombreAdmin           = $row['Nombre'];
-	$ApellidoAdmin         = $row['Apellido'];
+    $NombreAdmin           = $row['Nombre'];
+    $ApellidoAdmin         = $row['Apellido'];
 }
 
 $allowProfesores = false;
 $allowAdministradores = false;
 
 if($Cargo == 2){
-	$allowProfesores = true;
+    $allowProfesores = true;
 }else if($Cargo == 3){
-	$allowAdministradores = true;
+    $allowAdministradores = true;
 }
 
+//Modificar Datos del Usuario
+if(isset($_POST['save'])){
+    $NombreAdmin  		= $_POST['Nombre'];
+    $ApellidoAdmin      = $_POST['Apellido'];
 
+    $NombreProfesor		= $_POST['Nombre'];
+    $ApellidoProfesor   = $_POST['Apellido'];
 
-	//Modificar Datos del Usuario
-	if(isset($_POST['save'])){
-		$NombreAdmin  		= $_POST['Nombre'];
-		$ApellidoAdmin      = $_POST['Apellido'];;
+    $Usuario  		= $_POST['Usuario'];
 
-		$NombreProfesor		= $_POST['Nombre'];
-		$ApellidoProfesor   = $_POST['Apellido'];;
+    if($_POST['Contraseña1']==$_POST['Contraseña2']){
+        $Contraseña=sha1($_POST['Contraseña2']);	
+    } else {
+        echo "<script>alert('Error al guardar datos, revise que estos coinsidan'); window.location='../view/Perfil.php'; </script>";
+    }
 
-		$Usuario  		= $_POST['Usuario'];
+    if($Cargo == 2){
+        $sql_update = $objeto->actualizar("profesores INNER JOIN usuarios ON profesores.id_Usuario = usuarios.id_Usuario", "Nombre='$NombreProfesor', Apellido='$ApellidoProfesor', usuarios.Usuario='$Usuario', usuarios.Contraseña='$Contraseña'", "profesores.id_Usuario = '$usuarioverificacion'");
+    } else if($Cargo == 3){
+        $sql_update = $objeto->actualizar("administradores INNER JOIN usuarios ON administradores.id_Usuario = usuarios.id_Usuario", "Nombre='$NombreAdmin', Apellido='$ApellidoAdmin', usuarios.Usuario='$Usuario', usuarios.Contraseña='$Contraseña'", "administradores.id_Usuario = '$usuarioverificacion'");
+    }
 
-		if($_POST['Contraseña1']==$_POST['Contraseña2']){
-		$Contraseña=sha1($_POST['Contraseña2']);	}
-		else{
-		echo "<script>alert('Error al guardar datos, revise que estos coinsidan'); window.location='../view/Perfil.php'; </script>";
-		}
+    if($sql_update == true){
+        echo "<script>alert('Se han guardado los datos Correctamente'); window.location='../view/Pagina de la escuela.php'; </script>";
+    } else {
+        echo '<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Error, no se pudo guardar los datos.</div>';
+    }
+}
 
-		if($Cargo == 2){
-			$sql_update = $objeto->actualizar("profesores INNER JOIN usuarios ON profesores.id_Usuario = usuarios.id_Usuario", "Nombre='$NombreProfesor', Apellido='$ApellidoProfesor', usuarios.Usuario='$Usuario', usuarios.Contraseña='$Contraseña'", "profesores.id_Usuario = '$usuarioverificacion'");
-		}else if($Cargo == 3){
-			$sql_update = $objeto->actualizar("administradores INNER JOIN usuarios ON administradores.id_Usuario = usuarios.id_Usuario", "Nombre='$NombreAdmin', Apellido='$ApellidoAdmin', usuarios.Usuario='$Usuario', usuarios.Contraseña='$Contraseña'", "administradores.id_Usuario = '$usuarioverificacion'");
-		}
+//Borrar Profesor
+if(isset($_GET['aksi']) == 'delete'){
+    $nik = $_GET["nik"];
+    $cek = $objeto->mostrar_condicion("*","profesores","id_Profesor='$nik'"); 
+    if($cek == 0){
+        echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Error, No se ha encontrado al profesor.</div>';
+        header("location:Perfil.php");
+    } else {
+        $borrar = $objeto->eliminar("profesores","id_Usuario='$nik'");
+        $borrar2 = $objeto->eliminar("usuarios","id_Usuario='$nik'");
 
-		if($sql_update == true){
-			echo "<script>alert('Se han guardado los datos Correctamente'); window.location='../view/Pagina de la escuela.php'; </script>";
-		}else{
-			echo '<div class="alert alert-danger alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>Error, no se pudo guardar los datos.</div>';
-		}
-	}
-
-	//Borrar Profesor
-	if(isset($_GET['aksi']) == 'delete'){
-		$nik = $_GET["nik"];
-		$cek = $objeto->mostrar_condicion("*","profesores","id_Profesores='$nik'"); 
-		if($cek == 0){
-			echo '<div class="alert alert-info alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> Error, No se ha encontrado al profesor.</div>';
-			header("location:Perfil.php");
-		}else{
-			$borrar = $objeto->eliminar("profesores","id_Usuario='$nik'");
-			$borrar2 = $objeto->eliminar("usuarios","id_Usuario='$nik'");
-
-			if($borrar && $borrar2){
-				echo "<script>alert('Se ha eliminado el profesor Correctamente'); </script>";
-			}else{
-				echo "<script>alert('Error, No se pudo eliminar el profesor'); </script>";
-			}
-		}
-	}
+        if($borrar && $borrar2){
+            echo "<script>alert('Se ha eliminado el profesor Correctamente'); </script>";
+        } else {
+            echo "<script>alert('Error, No se pudo eliminar el profesor'); </script>";
+        }
+    }
+}
 ?>
-
 <!DOCTYPE html>
 <html long ="es">
 <head>
@@ -98,26 +95,26 @@ if($Cargo == 2){
   <title>Perfil</title>
   <link rel="stylesheet" href="css/style.css">
   <!-- Font Awesome -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-	<!-- Google Fonts -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-	<!-- Bootstrap core CSS -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-	<!-- Material Design Bootstrap -->
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
-	<!-- JQuery -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<!-- Bootstrap tooltips -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-	<!-- Bootstrap core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-	<!-- MDB core JavaScript -->
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-	<!-- Bootstrap datatable  -->
-	<link href="css/addons/datatables.min.css" rel="stylesheet">
-	<!-- Bootstrap datatable JavaScript -->
-	<script type="text/javascript" src="css/js/addons/datatables.min.js"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+    <!-- Bootstrap datatable  -->
+    <link href="css/addons/datatables.min.css" rel="stylesheet">
+    <!-- Bootstrap datatable JavaScript -->
+    <script type="text/javascript" src="css/js/addons/datatables.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -164,10 +161,10 @@ if($Cargo == 2){
 				<a class="dropdown-item" href="Contactanos.php">Mandanos un Email</a>
 			</div>
 		  </li>
-		  <?php
-				require_once("../controller/Login.php");
-				if($estado){
-					?>
+          <?php
+                require_once("../controller/Login.php");
+                if($estado){
+                    ?>
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle active" id="navbarDropdownMenuLink-4" data-toggle="dropdown"
 						aria-haspopup="true" aria-expanded="false">
@@ -275,20 +272,20 @@ if($Cargo == 2){
 					<div class="col-xl-10 col-lg-11 col-md-7 col-sm-8 m-xl-0 m-sm-auto">
 					<label class="control-label font-weight-bold">Cargo </label>
 					<p>
-						<?php echo $Descripcion_Cargo;  ?>
-					</p>
+                        <?php echo $Descripcion_Cargo;  ?>
+                    </p>
 					</div>
 				</div>
-				<?php if($allowProfesores){?>
-				<div class="form-group">
-					<div class="col-xl-10 col-lg-11 col-md-7 col-sm-8 m-xl-0 m-sm-auto">
-					<label class="control-label font-weight-bold">Materia/s  Asignada/s </label>
-					</p>
-					<?php	
-					foreach ($sqlMaterias as $row){
-						echo $row['Año']." ".$row['Descripcion_Materia'].'</p>';
-					}
-					?> 
+                <?php if($allowProfesores){?>
+                <div class="form-group">
+                    <div class="col-xl-10 col-lg-11 col-md-7 col-sm-8 m-xl-0 m-sm-auto">
+                    <label class="control-label font-weight-bold">Materia/s  Asignada/s </label>
+                    </p>
+                    <?php	
+                    foreach ($sqlMaterias as $row){
+                        echo $row['Año']." ".$row['Descripcion_Materia'].'</p>';
+                    }
+                    ?> 
 					</div>
 				</div>
 				<?php } ?>
@@ -300,24 +297,24 @@ if($Cargo == 2){
 				</div>
 			</form>
 		</div>
-		<?php if($allowAdministradores){?>
-			<div class="col-xl-7 col-lg-8 col-md-12">
-			<div class="col-12 text-center text-xl-left">
-				<a href ="CrearProfesor.php" class="white-text">
-					<button type="button" class="btn btn-info btn-md">
-						<i class="fas fa-user-plus"></i> Crear Nuevo Profesor
-					</button>
-				</a>
-				<a href ="EliminarProfesor.php" class="white-text">
-					<button type="button" class="btn btn-danger btn-md">
-						<i class="fas fa-trash"></i> Eliminar Profesores
-					</button>
-				</a>
-				</div>
-				<div class ="table-responsive-sm">
-					<table border="1" id="dtBasicExample" class="table text-center table-striped">
-						<thead class="table-dark">
-							<tr> 
+        <?php if($allowAdministradores){?>
+            <div class="col-xl-7 col-lg-8 col-md-12">
+            <div class="col-12 text-center text-xl-left">
+                <a href ="CrearProfesor.php" class="white-text">
+                    <button type="button" class="btn btn-info btn-md">
+                        <i class="fas fa-user-plus"></i> Crear Nuevo Profesor
+                    </button>
+                </a>
+                <a href ="EliminarProfesor.php" class="white-text">
+                    <button type="button" class="btn btn-danger btn-md">
+                        <i class="fas fa-trash"></i> Eliminar Profesores
+                    </button>
+                </a>
+                </div>
+                <div class ="table-responsive-sm">
+                    <table border="1" id="dtBasicExample" class="table text-center table-striped">
+                        <thead class="table-dark">
+                            <tr> 
 								<th> Curso 	  </th>
 								<th> Materia  </th>
 								<th> Profesor </th>
@@ -326,7 +323,7 @@ if($Cargo == 2){
 						</thead>                
 						<tbody>
 							<?php
-								$resultado = $objeto->mostrar("*","materias t1 LEFT JOIN profesores t2 ON t1.id_Profesores=t2.id_Profesores INNER JOIN cursos t3 ON t1.id_Curso=t3.id_Curso");	
+								$resultado = $objeto->mostrar("*","materias t1 LEFT JOIN profesores t2 ON t1.id_Materia=t2.id_Materia INNER JOIN cursos t3 ON t1.id_Curso=t3.id_Curso");								
 								foreach ($resultado as $fila){
 								echo "<tr>";
 								echo "<td>".$fila['Año']."</td>"; 
