@@ -1,7 +1,7 @@
 # PaginaWEB-Tecnica2DrReneFavaloro
 # MEJORE MUCHO MI MANERA DE CODEAR, ESTA FUE LA PRIMERA VEZ QUE HICE UN PROYECTO
 # VIDEO
--https://youtu.be/F9NmK5cMNkU
+[![Video del Proyecto](https://img.youtube.com/vi/F9NmK5cMNkU/maxresdefault.jpg)](https://www.youtube.com/watch?v=F9NmK5cMNkU)
 
 
 ![Captura de pantalla 2024-12-07 145513](https://github.com/user-attachments/assets/6fc4ae49-723d-44e8-a62d-33fce26f8226)
